@@ -42,3 +42,18 @@ inflation_layer:
 static_layer:
   enabled: true
 ```
+
+下面展示并说明一份global_costmap_params.yaml文件中的参数详情。
+```
+global_costmap:
+  global_frame: /map      #全局地图需要在哪个坐标系下运行
+  robot_base_frame: /robot0   #在全局代价地图中机器人本体的基坐标系，通过global_frame和robot_base_frame就可以计算两个坐标系之间的变换，得到机器人在全局坐标系下的坐标
+  update_frequency: 0.5      #全局代价地图更新频率，一般全局代价地图的更新频率比较低
+  static_map: true        #是否使用map_server提供的地图来进行初始化，一般都是需要的
+  rolling_window: false     #是否在机器人移动的过程中滚动窗口，始终保持机器人在当前窗口最中心
+  transform_tolerance: 1.0    #坐标系转换可以忍受的最大延迟
+  plugins:          #插件
+    - {name: static_layer,    type: "costmap_2d::StaticLayer"}
+    - {name: obstacle_layer,  type: "costmap_2d::ObstacleLayer"}
+    - {name: inflation_layer, type: "costmap_2d::InflationLayer"}
+```
