@@ -11,5 +11,34 @@ costmap在ROS中通过功能包costmap_2d来实现，costmap_2d包括local_costm
 
 -Other Layer:你可以通过插件形式自己实现costmap。
 
-我们可以通过move_base内部逻辑流程图来
+我们可以通过move_base内部逻辑流程图来对costmap进一步理解。
 ![image](https://github.com/Hebanxi4n/hello-world/blob/ff4980e27b4173b9efbac0e2e014a8bdd88238e1/images/1531722258772314.png)
+
+从上图可以，在规划路径时costmap的信息是必不可少的。
+
+下面展示并说明一份costmap_common_params.yaml文件中的参数详情。
+```
+robot_radius: 0.2  #设置机器人的半径，如果机器人不是圆形的，则需要footprint参数
+
+obstacle_layer:    #配置障碍物图层 
+  enabled: true
+  combination_method: 1
+  track_unknown_space: true   #true时地图上有致命碰撞、自由区域、未知区域。false时只有致命碰撞、自由区域，即可以将未知区域纳入路径规划的范围
+  obstacle_range: 2.5     #机器人检测障碍物的最大范围，超过该范围的障碍物不检测
+  raytrace_range: 3.0     #机器人在移动的过程中，实时清除代价地图上的障碍物的最大范围，更新自由区域的空间数据
+  observation_sources: laser_scan_sensor    #设置导航中的传感器
+  laser_scan_sensor: {
+    sensor_frame: /robot0_laser_0,
+    data_type: LaserScan,
+    topic: /robot0/laser_0,
+    marking: true,      #是否可以使用该传感器来标记障碍物
+    clearing: true      #是否可以使用该传感器来清除障碍物标记为自由空间
+  }
+inflation_layer:    
+  enabled: true
+  cost_scaling_factor: 5.0    #膨胀过程中应用到代价值的比例因子，注意增大该比例因子会降低代价
+  inflation_radius: 0.36      #膨胀半径，膨胀层会把障碍物代价膨胀到该半径为止，一般设置为机器人底盘半径的大小
+ 
+static_layer:
+  enabled: true
+```
